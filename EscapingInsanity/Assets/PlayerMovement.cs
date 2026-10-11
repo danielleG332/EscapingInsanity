@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
 
+
     private CharacterController controller;
     private Animator characterAnimator;
 
@@ -37,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Keyboard.current.dKey.isPressed)
             x = 1f;
+            
 
         Vector3 move = transform.right * x + transform.forward * z;
 
@@ -83,4 +85,46 @@ if (Keyboard.current.spaceKey.wasPressedThisFrame)
 
         controller.Move(velocity * Time.deltaTime);
     }
+
+    // For interacting with the Xp and Item objects
+    private void OnTriggerEnter(Collider other)
+    {
+        Vector3 originalPosition = transform.position;
+        Vector3 offset = new Vector3(5, 0, 0);
+
+        if (other.gameObject.CompareTag("XP"))
+        {
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.CompareTag("Item"))
+        {
+            other.gameObject.SetActive(false);
+        }
+
+    }
+
+    // Attempt to make interactions with the Traps and Enemies.
+    /*private void OnCollisionEnter(Collision collision)
+    {
+        Vector3 originalPosition = transform.position;
+        Vector3 offset = new Vector3(5, 0, 0);
+
+        if (collision.gameObject.CompareTag("Trap"))
+        {
+            Destroy(controller);
+            Instantiate(controller);
+            controller.Move(originalPosition + offset);
+
+        }
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(controller);
+            Instantiate(controller);
+            controller.Move(originalPosition + offset);
+            
+
+        }
+    }*/
 }
