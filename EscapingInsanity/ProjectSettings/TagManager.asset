@@ -6,6 +6,8 @@ TagManager:
   tags:
   - XP
   - Item
+  - Trap
+  - Enemy
   layers:
   - Default
   - TransparentFX
