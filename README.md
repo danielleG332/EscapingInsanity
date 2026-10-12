@@ -1,8 +1,6 @@
 # Escaping Insanity
 
 **Studio:** Sunset Games  
-**Developers:** Danielle Garcia, Roy Mendez-Estrada, Charles López  
-**Date:** September 24, 2026
 
 ## About the Game
 
