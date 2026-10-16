@@ -9,20 +9,33 @@ public class PlayerMovement : MonoBehaviour
     public float jumpHeight = 2f;
     public float gravity = -9.81f;
 
+    [Header("Camera Direction")]
+    public Transform cameraTransform;
 
     private CharacterController controller;
     private Animator characterAnimator;
 
     private Vector3 velocity;
 
+    // 0 = North, 1 = East, 2 = South, 3 = West
+    private int currentDirection = 0;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
         characterAnimator = GetComponentInChildren<Animator>();
+
+        // Automatically find the Main Camera if not assigned.
+        if (cameraTransform == null && Camera.main != null)
+        {
+            cameraTransform = Camera.main.transform;
+        }
     }
 
     void Update()
     {
+        Keyboard keyboard = Keyboard.current;
+
         // WASD movement
         float x = 0f;
         float z = 0f;
@@ -38,9 +51,30 @@ public class PlayerMovement : MonoBehaviour
 
         if (Keyboard.current.dKey.isPressed)
             x = 1f;
-            
 
-        Vector3 move = transform.right * x + transform.forward * z;
+
+        // Move relative to the camera's direction.
+        Vector3 move;
+
+        if (cameraTransform != null)
+        {
+            Vector3 cameraForward = cameraTransform.forward;
+            Vector3 cameraRight = cameraTransform.right;
+
+            // Ignore the camera's vertical angle.
+            cameraForward.y = 0f;
+            cameraRight.y = 0f;
+
+            cameraForward.Normalize();
+            cameraRight.Normalize();
+
+            move = cameraForward * z + cameraRight * x;
+        }
+        else
+        {
+            // Fallback if no camera is assigned.
+            move = transform.forward * z + transform.right * x;
+        }
 
         // Sprint
         bool isSprinting = Keyboard.current.leftShiftKey.isPressed;
@@ -69,23 +103,54 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Jump
-if (Keyboard.current.spaceKey.wasPressedThisFrame)
-{
-    Debug.Log("SPACE PRESSED");
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Debug.Log("SPACE PRESSED");
 
-    Debug.Log("Grounded: " + controller.isGrounded);
+            Debug.Log("Grounded: " + controller.isGrounded);
 
-    velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
-    characterAnimator.SetTrigger("JumpTrigger");
-}
+            characterAnimator.SetTrigger("JumpTrigger");
+        }
 
         // Gravity
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
-    }
 
+        // Camera direction controls
+        if (keyboard != null && cameraTransform != null)
+        {
+            int newDirection = currentDirection;
+
+            if (keyboard.upArrowKey.wasPressedThisFrame)
+                newDirection = 0;       // North
+
+            else if (keyboard.rightArrowKey.wasPressedThisFrame)
+                newDirection = 1;       // East
+
+            else if (keyboard.downArrowKey.wasPressedThisFrame)
+                newDirection = 2;       // South
+
+            else if (keyboard.leftArrowKey.wasPressedThisFrame)
+                newDirection = 3;       // West
+
+            if (newDirection != currentDirection)
+            {
+                int difference = newDirection - currentDirection;
+
+                cameraTransform.RotateAround(
+                    transform.position,
+                    Vector3.up,
+                    difference * 90f
+                );
+
+                currentDirection = newDirection;
+            }
+        }
+    }
+      
     // For interacting with the Xp and Item objects
     private void OnTriggerEnter(Collider other)
     {
