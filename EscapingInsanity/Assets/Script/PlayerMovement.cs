@@ -86,6 +86,9 @@ public class PlayerMovement : MonoBehaviour
 
         // Animation speed
         float speed = new Vector2(x, z).magnitude;
+        // Blend Tree movement direction
+        characterAnimator.SetFloat("MoveX", x);
+        characterAnimator.SetFloat("MoveY", z);
 
         if (isSprinting && speed > 0)
         {
