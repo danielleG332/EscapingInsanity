@@ -29,7 +29,7 @@ public class SlidingGate : MonoBehaviour
         isMoving = true;
 
         Vector3 targetPosition =
-            closedPosition + Vector3.up * openHeight;
+            closedPosition + Vector3.left * openHeight;
 
         while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
         {

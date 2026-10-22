@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +5,15 @@ using UnityEngine.InputSystem;
 
 public class GateInteraction : MonoBehaviour
 {
-    public string requiredKeyId = "Section1Key";
+    public enum GateKeyType
+    {
+        Section1Key,
+        Section2Key,
+        Section3Key
+    }
+
+    [Header("Gate Settings")]
+    public GateKeyType requiredKey = GateKeyType.Section1Key;
     public SlidingGate gate;
 
     private bool playerNearby = false;
@@ -24,19 +31,28 @@ public class GateInteraction : MonoBehaviour
             GateKeyInventory inventory =
                 FindFirstObjectByType<GateKeyInventory>();
 
+            string requiredKeyId = requiredKey.ToString();
+
             if (inventory != null &&
                 inventory.HasKey(requiredKeyId))
             {
                 inventory.UseKey(requiredKeyId);
 
                 isUnlocked = true;
-                gate.OpenGate();
 
-                Debug.Log("Gate unlocked!");
+                if (gate != null)
+                {
+                    gate.OpenGate();
+                    Debug.Log(requiredKeyId + " unlocked the gate!");
+                }
+                else
+                {
+                    Debug.LogError("No SlidingGate assigned!");
+                }
             }
             else
             {
-                Debug.Log("This gate is locked. Find its key!");
+                Debug.Log("Gate locked! You need " + requiredKeyId);
             }
         }
     }
