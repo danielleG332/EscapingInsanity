@@ -67,6 +67,9 @@ public class ZombieAI : MonoBehaviour
 
     public void Defeat()
     {
-        Destroy(gameObject);
+        ZombieLifetime lifetime = GetComponent<ZombieLifetime>();
+
+        if (lifetime != null)
+            lifetime.Defeat();
     }
 }
