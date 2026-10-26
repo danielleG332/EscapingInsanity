@@ -5,8 +5,6 @@ public class PlayerMovement : MonoBehaviour
 {
     public float walkSpeed = 5f;
     public float sprintSpeed = 8f;
-
-    public float jumpHeight = 2f;
     public float gravity = -9.81f;
 
     [Header("Camera Direction")]
@@ -103,18 +101,6 @@ public class PlayerMovement : MonoBehaviour
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
-        }
-
-        // Jump
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            Debug.Log("SPACE PRESSED");
-
-            Debug.Log("Grounded: " + controller.isGrounded);
-
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-
-            characterAnimator.SetTrigger("JumpTrigger");
         }
 
         // Gravity
