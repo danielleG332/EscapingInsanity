@@ -14,6 +14,9 @@ public class ZombieAI : MonoBehaviour
     private Animator animator;
     private float nextAttackTime;
 
+    public float damagePerAttack = 10f;
+    private PlayerHealth playerHealth;
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -28,6 +31,11 @@ public class ZombieAI : MonoBehaviour
 
             if (target != null)
                 player = target.transform;
+        }
+
+        if (player != null)
+        {
+            playerHealth = player.GetComponent<PlayerHealth>();
         }
     }
 
@@ -48,19 +56,36 @@ public class ZombieAI : MonoBehaviour
             if (animator != null)
                 animator.SetBool("IsWalking", agent.velocity.sqrMagnitude > 0.1f);
         }
+
         else
         {
             agent.isStopped = true;
 
-            if (animator != null)
+            // Face the player while attacking.
+            Vector3 direction = player.position - transform.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude > 0.001f)
             {
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    Quaternion.LookRotation(direction),
+                    agent.angularSpeed * Time.deltaTime
+                );
+            }
+
+            if (animator != null)
                 animator.SetBool("IsWalking", false);
 
-                if (Time.time >= nextAttackTime)
-                {
+            if (Time.time >= nextAttackTime)
+            {
+                if (animator != null)
                     animator.SetTrigger("Attack");
-                    nextAttackTime = Time.time + attackCooldown;
-                }
+
+                if (playerHealth != null)
+                    playerHealth.TakeDamage(damagePerAttack);
+
+                nextAttackTime = Time.time + attackCooldown;
             }
         }
     }
