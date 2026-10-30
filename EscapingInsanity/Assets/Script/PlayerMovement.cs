@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,11 +10,15 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Camera Direction")]
     public Transform cameraTransform;
+    public Transform characterModel;
 
     private CharacterController controller;
     private Animator characterAnimator;
 
     private Vector3 velocity;
+
+    // Save the character's original rotation
+    private Quaternion originalModelRotation;
 
     // 0 = North, 1 = East, 2 = South, 3 = West
     private int currentDirection = 0;
@@ -22,6 +27,12 @@ public class PlayerMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         characterAnimator = GetComponentInChildren<Animator>();
+
+        // Save the original character model rotation
+        if (characterModel != null)
+        {
+            originalModelRotation = characterModel.localRotation;
+        }
 
         // Automatically find the Main Camera if not assigned.
         if (cameraTransform == null && Camera.main != null)
@@ -50,6 +61,19 @@ public class PlayerMovement : MonoBehaviour
         if (Keyboard.current.dKey.isPressed)
             x = 1f;
 
+        // Turn only the character model when moving backward
+        if (characterModel != null)
+        {
+            if (z < 0)
+            {
+                characterModel.localRotation =
+                    originalModelRotation * Quaternion.Euler(0, 180, 0);
+            }
+            else
+            {
+                characterModel.localRotation = originalModelRotation;
+            }
+        }
 
         // Move relative to the camera's direction.
         Vector3 move;
@@ -84,9 +108,10 @@ public class PlayerMovement : MonoBehaviour
 
         // Animation speed
         float speed = new Vector2(x, z).magnitude;
+
         // Blend Tree movement direction
         characterAnimator.SetFloat("MoveX", x);
-        characterAnimator.SetFloat("MoveY", z);
+        characterAnimator.SetFloat("MoveY", Mathf.Abs(z));
 
         if (isSprinting && speed > 0)
         {
@@ -139,8 +164,8 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-      
-    // For interacting with the Xp and Item objects
+
+    // For interacting with the XP and Item objects
     private void OnTriggerEnter(Collider other)
     {
         Vector3 originalPosition = transform.position;
@@ -155,7 +180,6 @@ public class PlayerMovement : MonoBehaviour
         {
             other.gameObject.SetActive(false);
         }
-
     }
 
     // Attempt to make interactions with the Traps and Enemies.
@@ -169,7 +193,6 @@ public class PlayerMovement : MonoBehaviour
             Destroy(controller);
             Instantiate(controller);
             controller.Move(originalPosition + offset);
-
         }
 
         if (collision.gameObject.CompareTag("Enemy"))
@@ -177,8 +200,6 @@ public class PlayerMovement : MonoBehaviour
             Destroy(controller);
             Instantiate(controller);
             controller.Move(originalPosition + offset);
-            
-
         }
     }*/
 }
