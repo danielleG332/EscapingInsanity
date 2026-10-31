@@ -180,6 +180,46 @@ public class PlayerMovement : MonoBehaviour
         {
             other.gameObject.SetActive(false);
         }
+
+        // Check a general tag instead of a specific weapon name
+        if (other.gameObject.CompareTag("WeaponPickup"))
+        {
+            // Get the component containing the weapon's identity
+            WeaponPickup pickup = other.gameObject.GetComponent<WeaponPickup>();
+
+            if (pickup != null)
+            {
+                ActivateWeapon(pickup.GetWeaponID());
+                Destroy(other.gameObject); // Destroy the ground object like the tutorial
+            }
+        }
+    }
+
+    [System.Serializable]
+    public struct WeaponSlot
+    {
+        public string weaponID;         // Matches the ID on the pickup script
+        public GameObject weaponObject; // The deactivated weapon childed to the player
+    }
+
+    // Array list visible in the Inspector
+    [SerializeField] private WeaponSlot[] weapons;
+
+    private void ActivateWeapon(string id)
+    {
+        // Loop through all assigned slots to find the matching ID
+        foreach (WeaponSlot slot in weapons)
+        {
+            if (slot.weaponID == id)
+            {
+                slot.weaponObject.SetActive(true); // Turn on the weapon
+            }
+            else
+            {
+                // Optional: Turn off other weapons if you only want to hold one at a time
+                slot.weaponObject.SetActive(false);
+            }
+        }
     }
 
     // Attempt to make interactions with the Traps and Enemies.
