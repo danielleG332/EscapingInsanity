@@ -190,7 +190,13 @@ public class PlayerMovement : MonoBehaviour
             if (pickup != null)
             {
                 ActivateWeapon(pickup.GetWeaponID());
-                Destroy(other.gameObject); // Destroy the ground object like the tutorial
+
+                if (characterAnimator != null)
+                {
+                    characterAnimator.SetBool("HasWeapon", true);
+                }
+
+                Destroy(other.gameObject);
             }
         }
     }
