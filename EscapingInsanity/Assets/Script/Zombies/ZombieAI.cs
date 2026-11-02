@@ -1,21 +1,24 @@
-
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
-using System.Collections.Generic;
 
 public class ZombieAI : MonoBehaviour
 {
     public Transform player;
+
+    [Header("Combat")]
     public float attackRange = 1.8f;
     public float attackCooldown = 1.5f;
+    public float damagePerAttack = 10f;
+
+    [Header("Movement")]
+    public float destinationUpdateRate = 0.2f;
 
     private NavMeshAgent agent;
     private Animator animator;
-    private float nextAttackTime;
-
-    public float damagePerAttack = 10f;
     private PlayerHealth playerHealth;
+
+    private float nextAttackTime;
+    private float nextDestinationUpdate;
 
     void Awake()
     {
@@ -27,7 +30,8 @@ public class ZombieAI : MonoBehaviour
     {
         if (player == null)
         {
-            GameObject target = GameObject.FindGameObjectWithTag("Player");
+            GameObject target =
+                GameObject.FindGameObjectWithTag("Player");
 
             if (target != null)
                 player = target.transform;
@@ -36,33 +40,52 @@ public class ZombieAI : MonoBehaviour
         if (player != null)
         {
             playerHealth = player.GetComponent<PlayerHealth>();
+
+            if (playerHealth == null)
+                playerHealth = player.GetComponentInParent<PlayerHealth>();
+
+            if (playerHealth == null)
+                playerHealth = player.GetComponentInChildren<PlayerHealth>();
         }
     }
 
     void Update()
     {
-        if (player == null || agent == null || !agent.isOnNavMesh)
+        if (player == null || agent == null ||
+            !agent.enabled || !agent.isOnNavMesh)
             return;
 
         float distance = Vector3.Distance(
-            transform.position, player.position
+            transform.position,
+            player.position
         );
 
         if (distance > attackRange)
         {
             agent.isStopped = false;
-            agent.SetDestination(player.position);
+
+            if (Time.time >= nextDestinationUpdate)
+            {
+                agent.SetDestination(player.position);
+                nextDestinationUpdate =
+                    Time.time + destinationUpdateRate;
+            }
 
             if (animator != null)
-                animator.SetBool("IsWalking", agent.velocity.sqrMagnitude > 0.1f);
+            {
+                animator.SetBool(
+                    "IsWalking",
+                    agent.velocity.sqrMagnitude > 0.1f
+                );
+            }
         }
-
         else
         {
             agent.isStopped = true;
 
-            // Face the player while attacking.
-            Vector3 direction = player.position - transform.position;
+            Vector3 direction =
+                player.position - transform.position;
+
             direction.y = 0f;
 
             if (direction.sqrMagnitude > 0.001f)
@@ -88,13 +111,5 @@ public class ZombieAI : MonoBehaviour
                 nextAttackTime = Time.time + attackCooldown;
             }
         }
-    }
-
-    public void Defeat()
-    {
-        ZombieLifetime lifetime = GetComponent<ZombieLifetime>();
-
-        if (lifetime != null)
-            lifetime.Defeat();
     }
 }

@@ -61,7 +61,7 @@ public class ZombieSpawner : MonoBehaviour
             zombiePrefab == null || player == null)
             return false;
 
-        for (int attempt = 0; attempt < 40; attempt++)
+        for (int attempt = 0; attempt < 20; attempt++)
         {
             Vector2 random =
                 Random.insideUnitCircle.normalized *

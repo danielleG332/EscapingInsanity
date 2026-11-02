@@ -60,9 +60,6 @@ public class ZombieHealth : MonoBehaviour
         foreach (Collider col in GetComponentsInChildren<Collider>())
             col.enabled = false;
 
-        if (spawner != null)
-            spawner.ZombieDefeated();
-
         StartCoroutine(RemoveAfterDeathAnimation());
     }
 
