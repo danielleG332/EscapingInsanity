@@ -20,7 +20,6 @@ public class ZombieLifetime : MonoBehaviour
         defeated = true;
 
         if (spawner != null)
-            spawner.ZombieDefeated();
 
         Destroy(gameObject);
     }

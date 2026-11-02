@@ -9,4 +9,35 @@ public class WeaponPickup : MonoBehaviour
     {
         return weaponID;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        PlayerMeleeCombat melee =
+            other.GetComponentInParent<PlayerMeleeCombat>();
+
+        if (melee != null && weaponID == "Bat")
+        {
+            melee.PickUpWeapon();
+
+            Destroy(gameObject);
+        }
+        if (melee != null && weaponID == "Axe")
+        {
+            melee.PickUpWeapon();
+
+            Destroy(gameObject);
+        }
+        if (melee != null && weaponID == "Hockey Stick")
+        {
+            melee.PickUpWeapon();
+
+            Destroy(gameObject);
+        }
+        if (melee != null && weaponID == "Knife")
+        {
+            melee.PickUpWeapon();
+
+            Destroy(gameObject);
+        }
+    }
 }

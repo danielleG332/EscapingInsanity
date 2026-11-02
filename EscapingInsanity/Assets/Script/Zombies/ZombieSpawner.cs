@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,7 +11,10 @@ public class ZombieSpawner : MonoBehaviour
     public float spawnRadius = 12f;
     public float minimumDistance = 5f;
 
+    public float spawnRetryDelay = 1f;
+
     private int aliveZombies = 0;
+    private Coroutine spawnRoutine;
 
     void Start()
     {
@@ -25,22 +27,37 @@ public class ZombieSpawner : MonoBehaviour
         }
 
         if (zombiePrefab == null || player == null)
-        {
-            Debug.LogError("Assign the zombie prefab and player!");
             return;
-        }
 
-        for (int i = 0; i < maxZombies; i++)
-        {
-            SpawnZombie();
-        }
+        StartSpawnRoutine();
     }
 
-    public void SpawnZombie()
+    void StartSpawnRoutine()
+    {
+        if (spawnRoutine == null)
+            spawnRoutine = StartCoroutine(MaintainZombieCount());
+    }
+
+    IEnumerator MaintainZombieCount()
+    {
+        while (aliveZombies < maxZombies)
+        {
+            bool spawned = SpawnZombie();
+
+            if (!spawned)
+                yield return new WaitForSeconds(spawnRetryDelay);
+            else
+                yield return null;
+        }
+
+        spawnRoutine = null;
+    }
+
+    bool SpawnZombie()
     {
         if (aliveZombies >= maxZombies ||
             zombiePrefab == null || player == null)
-            return;
+            return false;
 
         for (int attempt = 0; attempt < 20; attempt++)
         {
@@ -57,38 +74,30 @@ public class ZombieSpawner : MonoBehaviour
                     zombiePrefab, hit.position, Quaternion.identity);
 
                 ZombieAI ai = zombie.GetComponent<ZombieAI>();
+                ZombieHealth health = zombie.GetComponent<ZombieHealth>();
 
-                if (ai != null)
-                {
-                    ai.player = player;
-                    aliveZombies++;
-
-                    // Called when this zombie is defeated.
-                    ZombieLifetime lifetime =
-                        zombie.GetComponent<ZombieLifetime>();
-
-                    if (lifetime != null)
-                        lifetime.Initialize(this);
-                    else
-                        Debug.LogWarning(
-                            "Zombie prefab needs ZombieLifetime.");
-                }
-                else
+                if (ai == null || health == null)
                 {
                     Destroy(zombie);
-                    Debug.LogError("Zombie prefab needs ZombieAI.");
+                    return false;
                 }
 
-                return;
+                ai.player = player;
+                health.SetSpawner(this);
+
+                aliveZombies++;
+
+                return true;
             }
         }
 
-        Debug.LogWarning("Could not find a valid zombie spawn position.");
+        return false;
     }
 
     public void ZombieDefeated()
     {
         aliveZombies = Mathf.Max(0, aliveZombies - 1);
-        SpawnZombie();
+
+        StartSpawnRoutine();
     }
 }

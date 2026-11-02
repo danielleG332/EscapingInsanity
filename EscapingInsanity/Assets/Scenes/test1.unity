@@ -13291,9 +13291,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZombieSpawner
   zombiePrefab: {fileID: 156872580}
   player: {fileID: 192496844}
-  maxZombies: 9
-  spawnRadius: 24
-  minimumDistance: 10
+  maxZombies: 14
+  spawnRadius: 48
+  minimumDistance: 20
+  spawnRetryDelay: 1
 --- !u!4 &83862955
 Transform:
   m_ObjectHideFlags: 0
@@ -21424,6 +21425,32 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 188456310791234793, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
   m_PrefabInstance: {fileID: 2058720390}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &156872586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156872580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87f8acbbd13ec474fbf660e71af04f90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZombieHealth
+  maxHealth: 3
+  deathAnimationDuration: 2.5
+--- !u!114 &156872587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156872580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34e4bef0d3cdab040876ac0450485a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZombieLifetime
 --- !u!1 &161751753
 GameObject:
   m_ObjectHideFlags: 0
@@ -41788,6 +41815,33 @@ MonoBehaviour:
   healthBar: {fileID: 564447044}
   losePanel: {fileID: 2012904089}
   loseText: {fileID: 1989196257}
+--- !u!95 &395652450 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
+  m_PrefabInstance: {fileID: 1750080209}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &395652451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395652441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68cb7442d95533842bbd8605c190565a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMeleeCombat
+  attackRange: 3.8
+  attackRadius: 3.8
+  attackDamage: 1
+  attackCooldown: 1
+  hitDelay: 0.3
+  animator: {fileID: 395652450}
+  attackPoint: {fileID: 902188400}
+  zombieLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!43 &396237554
 Mesh:
   m_ObjectHideFlags: 0
@@ -95765,6 +95819,11 @@ Transform:
   - {fileID: 1040325368}
   m_Father: {fileID: 2057615460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!4 &902188400 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6317818615819501424, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
+  m_PrefabInstance: {fileID: 1750080209}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &904162126
 Mesh:
   m_ObjectHideFlags: 0
@@ -204093,6 +204152,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 395652449}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 395652451}
   m_SourcePrefab: {fileID: 100100000, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
 --- !u!1 &1752445332
 GameObject:
@@ -240589,7 +240651,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 708851473136762451, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.13758
+      value: -45.6
       objectReference: {fileID: 0}
     - target: {fileID: 708851473136762451, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -240635,6 +240697,10 @@ PrefabInstance:
       propertyPath: m_Center.x
       value: 0.0030180216
       objectReference: {fileID: 0}
+    - target: {fileID: 3909986724050059818, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7986386516642390415, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
       propertyPath: player
       value: 
@@ -240646,7 +240712,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 188456310791234793, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 156872586}
+    - targetCorrespondingSourceObject: {fileID: 188456310791234793, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 156872587}
   m_SourcePrefab: {fileID: 100100000, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
 --- !u!1 &2060221031
 GameObject:
