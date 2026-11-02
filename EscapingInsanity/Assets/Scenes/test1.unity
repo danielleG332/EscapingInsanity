@@ -21438,19 +21438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZombieHealth
   maxHealth: 3
-  deathAnimationDuration: 2.5
---- !u!114 &156872587
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 156872580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34e4bef0d3cdab040876ac0450485a59, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ZombieLifetime
+  deathAnimationDuration: 1.5
 --- !u!1 &161751753
 GameObject:
   m_ObjectHideFlags: 0
@@ -41833,12 +41821,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMeleeCombat
   attackRange: 3.8
-  attackRadius: 3.8
+  attackRadius: 1.8
   attackDamage: 1
-  attackCooldown: 1
+  attackCooldown: 0.5
   hitDelay: 0.3
   animator: {fileID: 395652450}
-  attackPoint: {fileID: 902188400}
+  attackPoint: {fileID: 479982712}
   zombieLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -95819,11 +95807,6 @@ Transform:
   - {fileID: 1040325368}
   m_Father: {fileID: 2057615460}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
---- !u!4 &902188400 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -6317818615819501424, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
-  m_PrefabInstance: {fileID: 1750080209}
-  m_PrefabAsset: {fileID: 0}
 --- !u!43 &904162126
 Mesh:
   m_ObjectHideFlags: 0
@@ -240716,9 +240699,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 188456310791234793, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 156872586}
-    - targetCorrespondingSourceObject: {fileID: 188456310791234793, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 156872587}
   m_SourcePrefab: {fileID: 100100000, guid: 3ea4975205e779c40afb78194f9d256d, type: 3}
 --- !u!1 &2060221031
 GameObject:

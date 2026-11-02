@@ -69,6 +69,10 @@ public class ZombieHealth : MonoBehaviour
     IEnumerator RemoveAfterDeathAnimation()
     {
         yield return new WaitForSeconds(deathAnimationDuration);
+
+        if (spawner != null)
+            spawner.ZombieDefeated();
+
         Destroy(gameObject);
     }
 }
