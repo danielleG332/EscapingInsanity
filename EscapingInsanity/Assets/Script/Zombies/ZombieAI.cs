@@ -67,14 +67,14 @@ public class ZombieAI : MonoBehaviour
             if (Time.time >= nextDestinationUpdate)
             {
                 agent.SetDestination(player.position);
-                nextDestinationUpdate =
-                    Time.time + destinationUpdateRate;
+                nextDestinationUpdate = Time.time + 0.2f;
             }
 
             if (animator != null)
             {
                 animator.SetBool(
                     "IsWalking",
+                    !agent.isStopped &&
                     agent.velocity.sqrMagnitude > 0.1f
                 );
             }

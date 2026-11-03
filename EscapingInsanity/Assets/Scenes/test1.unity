@@ -13291,7 +13291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZombieSpawner
   zombiePrefab: {fileID: 156872580}
   player: {fileID: 192496844}
-  maxZombies: 5
+  maxZombies: 14
   spawnRadius: 20
   minimumDistance: 5
   spawnRetryDelay: 1

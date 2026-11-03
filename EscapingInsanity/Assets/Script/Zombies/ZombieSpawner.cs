@@ -18,6 +18,8 @@ public class ZombieSpawner : MonoBehaviour
 
     private int aliveZombies = 0;
 
+    private float nextSpawnTime = 0f;
+
     void Start()
     {
         if (player == null)
@@ -35,6 +37,21 @@ public class ZombieSpawner : MonoBehaviour
         StartCoroutine(MaintainZombieCount());
     }
 
+    void Update()
+    {
+        if (zombiePrefab == null || player == null)
+            return;
+
+        if (aliveZombies < maxZombies &&
+            Time.time >= nextSpawnTime)
+        {
+            if (SpawnZombie())
+                nextSpawnTime = Time.time + 0.5f;
+            else
+                nextSpawnTime = Time.time + spawnRetryDelay;
+        }
+    }
+
     IEnumerator MaintainZombieCount()
     {
         while (true)
@@ -46,11 +63,11 @@ public class ZombieSpawner : MonoBehaviour
                 if (!spawned)
                     yield return new WaitForSeconds(spawnRetryDelay);
                 else
-                    yield return null;
+                    yield return new WaitForSeconds(0.2f);
             }
             else
             {
-                yield return null;
+                yield return new WaitForSeconds(0.2f);
             }
         }
     }
