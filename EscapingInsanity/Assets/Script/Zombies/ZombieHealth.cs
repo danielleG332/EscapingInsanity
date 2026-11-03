@@ -15,6 +15,10 @@ public class ZombieHealth : MonoBehaviour
     private NavMeshAgent agent;
     private ZombieSpawner spawner;
 
+    [Header("XP Drop")]
+    public GameObject xpOrbPrefab;
+    public int xpDropAmount = 25;
+
     public bool IsDead => isDead;
 
     void Awake()
@@ -46,6 +50,20 @@ public class ZombieHealth : MonoBehaviour
             return;
 
         isDead = true;
+
+        if (xpOrbPrefab != null)
+        {
+            GameObject orb = Instantiate(
+                xpOrbPrefab,
+                transform.position + Vector3.up * 0.5f,
+                Quaternion.identity
+            );
+
+            XPOrb xpOrb = orb.GetComponent<XPOrb>();
+
+            if (xpOrb != null)
+                xpOrb.xpAmount = xpDropAmount;
+        }
 
         if (agent != null)
         {
