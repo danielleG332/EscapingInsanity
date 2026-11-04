@@ -12,10 +12,12 @@ public class PlayerHealth : MonoBehaviour
     public TMP_Text loseText;
 
     private bool isDead = false;
+    private PlayerSanity sanity;
 
     void Start()
     {
         currentHealth = maxHealth;
+        sanity = GetComponent<PlayerSanity>();
 
         if (healthBar != null)
         {
@@ -29,7 +31,7 @@ public class PlayerHealth : MonoBehaviour
             loseText.text = "YOU LOSE!";
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, bool causesInsanity = true)
     {
         if (isDead || damage <= 0)
             return;
@@ -41,11 +43,14 @@ public class PlayerHealth : MonoBehaviour
             healthBar.SetHealth(Mathf.RoundToInt(currentHealth));
         }
 
+        if (causesInsanity && sanity != null)
+            sanity.LowerSanity(damage);
+
         if (currentHealth <= 0)
             GameOver();
     }
 
-    void GameOver()
+    public void GameOver()
     {
         if (isDead)
             return;
