@@ -12,15 +12,4 @@ public class ZombieLifetime : MonoBehaviour
         spawner = owner;
     }
 
-    public void Defeat()
-    {
-        if (defeated)
-            return;
-
-        defeated = true;
-
-        if (spawner != null)
-
-        Destroy(gameObject);
-    }
 }

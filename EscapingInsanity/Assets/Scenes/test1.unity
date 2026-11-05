@@ -21260,7 +21260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZombieHealth
   maxHealth: 3
-  deathAnimationDuration: 1.5
+  deathAnimationDuration: 1
   xpOrbPrefab: {fileID: 888240461}
   xpDropAmount: 25
 --- !u!1 &161751753
@@ -95552,7 +95552,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e00c8c5f63045e84c9ade67212ad47d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::XPOrb
-  xpAmount: 5
+  xpAmount: 25
+  attractionRange: 5
+  attractionSpeed: 8
+  collectionDistance: 0.1
 --- !u!43 &894530262
 Mesh:
   m_ObjectHideFlags: 0

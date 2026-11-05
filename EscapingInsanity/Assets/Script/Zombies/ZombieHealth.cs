@@ -13,7 +13,6 @@ public class ZombieHealth : MonoBehaviour
 
     private Animator animator;
     private NavMeshAgent agent;
-    private ZombieSpawner spawner;
 
     [Header("XP Drop")]
     public GameObject xpOrbPrefab;
@@ -28,10 +27,6 @@ public class ZombieHealth : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
     }
 
-    public void SetSpawner(ZombieSpawner owner)
-    {
-        spawner = owner;
-    }
 
     public void TakeDamage(int damage)
     {
@@ -65,9 +60,11 @@ public class ZombieHealth : MonoBehaviour
                 xpOrb.xpAmount = xpDropAmount;
         }
 
-        if (agent != null)
+        if (agent != null && agent.enabled)
         {
-            agent.isStopped = true;
+            if (agent.isOnNavMesh)
+                agent.isStopped = true;
+
             agent.enabled = false;
         }
 
@@ -85,8 +82,6 @@ public class ZombieHealth : MonoBehaviour
     {
         yield return new WaitForSeconds(deathAnimationDuration);
 
-        if (spawner != null)
-            spawner.ZombieDefeated();
 
         Destroy(gameObject);
     }

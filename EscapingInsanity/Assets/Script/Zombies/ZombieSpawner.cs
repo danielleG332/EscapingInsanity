@@ -1,4 +1,4 @@
-using System.Collections;
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,8 +16,6 @@ public class ZombieSpawner : MonoBehaviour
     [Header("Spawn Retry")]
     public float spawnRetryDelay = 1f;
 
-    private int aliveZombies = 0;
-
     private float nextSpawnTime = 0f;
 
     void Start()
@@ -30,11 +28,6 @@ public class ZombieSpawner : MonoBehaviour
             if (target != null)
                 player = target.transform;
         }
-
-        if (zombiePrefab == null || player == null)
-            return;
-
-        StartCoroutine(MaintainZombieCount());
     }
 
     void Update()
@@ -42,40 +35,30 @@ public class ZombieSpawner : MonoBehaviour
         if (zombiePrefab == null || player == null)
             return;
 
-        if (aliveZombies < maxZombies &&
-            Time.time >= nextSpawnTime)
+        int currentZombies =
+            FindObjectsByType<ZombieHealth>(
+                FindObjectsSortMode.None
+            ).Length;
+
+        if (currentZombies >= maxZombies)
+            return;
+
+        if (Time.time < nextSpawnTime)
+            return;
+
+        if (SpawnZombie())
         {
-            if (SpawnZombie())
-                nextSpawnTime = Time.time + 0.5f;
-            else
-                nextSpawnTime = Time.time + spawnRetryDelay;
+            nextSpawnTime = Time.time + 0.5f;
         }
-    }
-
-    IEnumerator MaintainZombieCount()
-    {
-        while (true)
+        else
         {
-            if (aliveZombies < maxZombies)
-            {
-                bool spawned = SpawnZombie();
-
-                if (!spawned)
-                    yield return new WaitForSeconds(spawnRetryDelay);
-                else
-                    yield return new WaitForSeconds(0.2f);
-            }
-            else
-            {
-                yield return new WaitForSeconds(0.2f);
-            }
+            nextSpawnTime = Time.time + spawnRetryDelay;
         }
     }
 
     bool SpawnZombie()
     {
-        if (aliveZombies >= maxZombies ||
-            zombiePrefab == null || player == null)
+        if (zombiePrefab == null || player == null)
             return false;
 
         for (int attempt = 0; attempt < 20; attempt++)
@@ -110,19 +93,11 @@ public class ZombieSpawner : MonoBehaviour
                 }
 
                 ai.player = player;
-                health.SetSpawner(this);
-
-                aliveZombies++;
 
                 return true;
             }
         }
 
         return false;
-    }
-
-    public void ZombieDefeated()
-    {
-        aliveZombies = Mathf.Max(0, aliveZombies - 1);
     }
 }
