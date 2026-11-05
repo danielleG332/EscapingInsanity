@@ -1,4 +1,5 @@
 
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,12 +14,17 @@ public class ZombieSpawner : MonoBehaviour
     public float spawnRadius = 12f;
     public float minimumDistance = 5f;
 
-    [Header("Spawn Retry")]
+    [Header("Spawn Timing")]
+    public float spawnInterval = 0.5f;
     public float spawnRetryDelay = 1f;
 
-    private float nextSpawnTime = 0f;
+    [Header("NavMesh Settings")]
+    public float navMeshSearchDistance = 3f;
+    public int spawnAttempts = 20;
 
-    void Start()
+    private Coroutine spawnCoroutine;
+
+    private void Start()
     {
         if (player == null)
         {
@@ -28,52 +34,99 @@ public class ZombieSpawner : MonoBehaviour
             if (target != null)
                 player = target.transform;
         }
-    }
 
-    void Update()
-    {
         if (zombiePrefab == null || player == null)
             return;
 
-        int currentZombies =
-            FindObjectsByType<ZombieHealth>(
-                FindObjectsSortMode.None
-            ).Length;
+        spawnCoroutine = StartCoroutine(MaintainZombieCount());
+    }
 
-        if (currentZombies >= maxZombies)
-            return;
-
-        if (Time.time < nextSpawnTime)
-            return;
-
-        if (SpawnZombie())
+    private IEnumerator MaintainZombieCount()
+    {
+        while (player != null)
         {
-            nextSpawnTime = Time.time + 0.5f;
-        }
-        else
-        {
-            nextSpawnTime = Time.time + spawnRetryDelay;
+            int currentZombies = CountLivingZombies();
+
+            if (currentZombies < maxZombies)
+            {
+                bool spawned = SpawnZombie();
+
+                if (!spawned)
+                {
+                    yield return new WaitForSeconds(spawnRetryDelay);
+                    continue;
+                }
+            }
+
+            yield return new WaitForSeconds(spawnInterval);
         }
     }
 
-    bool SpawnZombie()
+    [System.Obsolete]
+
+    private int CountLivingZombies()
+    {
+        ZombieHealth[] zombies =
+            FindObjectsOfType<ZombieHealth>();
+
+        int count = 0;
+
+        foreach (ZombieHealth health in zombies)
+        {
+            if (health == null || health.IsDead)
+                continue;
+
+            ZombieAI ai =
+                health.GetComponentInChildren<ZombieAI>();
+
+            NavMeshAgent agent =
+                health.GetComponentInChildren<NavMeshAgent>();
+
+            // Remove zombies that cannot function.
+            if (ai == null || !ai.enabled ||
+                agent == null || !agent.enabled ||
+                !agent.isOnNavMesh)
+            {
+                Destroy(health.gameObject);
+                continue;
+            }
+
+            count++;
+        }
+
+        return count;
+    }
+
+
+    private bool SpawnZombie()
     {
         if (zombiePrefab == null || player == null)
             return false;
 
-        for (int attempt = 0; attempt < 20; attempt++)
+        for (int i = 0; i < spawnAttempts; i++)
         {
-            Vector2 random =
-                Random.insideUnitCircle.normalized *
-                Random.Range(minimumDistance, spawnRadius);
+            Vector2 randomDirection =
+                Random.insideUnitCircle.normalized;
 
-            Vector3 candidate = player.position +
-                new Vector3(random.x, 0f, random.y);
+            if (randomDirection.sqrMagnitude < 0.001f)
+                randomDirection = Vector2.right;
+
+            float distance = Random.Range(
+                minimumDistance,
+                spawnRadius
+            );
+
+            Vector3 candidatePosition = player.position +
+                new Vector3(
+                    randomDirection.x * distance,
+                    0f,
+                    randomDirection.y * distance
+                );
 
             if (NavMesh.SamplePosition(
-                candidate,
+                candidatePosition,
                 out NavMeshHit hit,
-                3f,
+                navMeshSearchDistance,
                 NavMesh.AllAreas))
             {
                 GameObject zombie = Instantiate(
@@ -82,9 +135,8 @@ public class ZombieSpawner : MonoBehaviour
                     Quaternion.identity
                 );
 
-                ZombieAI ai = zombie.GetComponent<ZombieAI>();
-                ZombieHealth health =
-                    zombie.GetComponent<ZombieHealth>();
+                ZombieAI ai = zombie.GetComponentInChildren<ZombieAI>();
+                ZombieHealth health = zombie.GetComponent<ZombieHealth>();
 
                 if (ai == null || health == null)
                 {
@@ -93,11 +145,18 @@ public class ZombieSpawner : MonoBehaviour
                 }
 
                 ai.player = player;
+                
 
                 return true;
             }
         }
 
         return false;
+    }
+
+    // Kept for compatibility with your existing ZombieHealth script.
+    // The spawner now counts living zombies directly.
+    public void ZombieDefeated()
+    {
     }
 }

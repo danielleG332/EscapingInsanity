@@ -13294,7 +13294,10 @@ MonoBehaviour:
   maxZombies: 14
   spawnRadius: 20
   minimumDistance: 5
+  spawnInterval: 0.5
   spawnRetryDelay: 1
+  navMeshSearchDistance: 3
+  spawnAttempts: 20
 --- !u!4 &83862955
 Transform:
   m_ObjectHideFlags: 0
@@ -95553,7 +95556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::XPOrb
   xpAmount: 25
-  attractionRange: 5
+  attractionRange: 3
   attractionSpeed: 8
   collectionDistance: 0.1
 --- !u!43 &894530262
