@@ -1,17 +1,13 @@
 
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class ZombieHealth : MonoBehaviour
 {
     public int maxHealth = 3;
-    public float deathAnimationDuration = 1.5f;
 
     private int currentHealth;
     private bool isDead = false;
-
-    private Animator animator;
     private NavMeshAgent agent;
 
     [Header("XP Drop")]
@@ -23,10 +19,8 @@ public class ZombieHealth : MonoBehaviour
     void Awake()
     {
         currentHealth = maxHealth;
-        animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
     }
-
 
     public void TakeDamage(int damage)
     {
@@ -46,6 +40,7 @@ public class ZombieHealth : MonoBehaviour
 
         isDead = true;
 
+        // Drop XP before destroying the zombie.
         if (xpOrbPrefab != null)
         {
             GameObject orb = Instantiate(
@@ -59,29 +54,6 @@ public class ZombieHealth : MonoBehaviour
             if (xpOrb != null)
                 xpOrb.xpAmount = xpDropAmount;
         }
-
-        if (agent != null && agent.enabled)
-        {
-            if (agent.isOnNavMesh)
-                agent.isStopped = true;
-
-            agent.enabled = false;
-        }
-
-        if (animator != null)
-            animator.SetTrigger("Die");
-
-        // Stop the dead zombie from receiving more hits.
-        foreach (Collider col in GetComponentsInChildren<Collider>())
-            col.enabled = false;
-
-        StartCoroutine(RemoveAfterDeathAnimation());
-    }
-
-    IEnumerator RemoveAfterDeathAnimation()
-    {
-        yield return new WaitForSeconds(deathAnimationDuration);
-
 
         Destroy(gameObject);
     }
