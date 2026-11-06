@@ -19,6 +19,7 @@ public class ZombieAI : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
     private PlayerHealth playerHealth;
+    private ZombieHealth zombieHealth;
 
     private float nextAttackTime;
     private float nextDestinationUpdate;
@@ -28,11 +29,19 @@ public class ZombieAI : MonoBehaviour
 
     void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        agent = GetComponentInParent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
+        zombieHealth = GetComponent<ZombieHealth>();
     }
 
     void Start()
+    {
+        FindPlayer();
+
+        lastPosition = transform.position;
+    }
+
+    void FindPlayer()
     {
         if (player == null)
         {
@@ -48,19 +57,32 @@ public class ZombieAI : MonoBehaviour
             playerHealth = player.GetComponent<PlayerHealth>();
 
             if (playerHealth == null)
-                playerHealth = player.GetComponentInParent<PlayerHealth>();
+                playerHealth =
+                    player.GetComponentInParent<PlayerHealth>();
 
             if (playerHealth == null)
-                playerHealth = player.GetComponentInChildren<PlayerHealth>();
+                playerHealth =
+                    player.GetComponentInChildren<PlayerHealth>();
         }
-
-        lastPosition = transform.position;
     }
 
     void Update()
     {
-        if (player == null || agent == null ||
-            !agent.enabled || !agent.isOnNavMesh)
+        // Stop all AI behavior when defeated.
+        if (zombieHealth != null && zombieHealth.IsDead)
+        {
+            SetWalkingAnimation(false);
+            return;
+        }
+
+        if (player == null)
+        {
+            FindPlayer();
+            return;
+        }
+
+        if (agent == null || !agent.enabled ||
+            !agent.isOnNavMesh)
         {
             SetWalkingAnimation(false);
             return;
@@ -85,26 +107,10 @@ public class ZombieAI : MonoBehaviour
     {
         agent.isStopped = false;
 
+        // Update the destination periodically.
         if (Time.time >= nextDestinationUpdate)
         {
-            NavMeshPath path = new NavMeshPath();
-
-            bool pathFound = NavMesh.CalculatePath(
-                transform.position,
-                player.position,
-                NavMesh.AllAreas,
-                path
-            );
-
-            if (pathFound &&
-                path.status != NavMeshPathStatus.PathInvalid)
-            {
-                agent.SetPath(path);
-            }
-            else
-            {
-                agent.ResetPath();
-            }
+            agent.SetDestination(player.position);
 
             nextDestinationUpdate =
                 Time.time + destinationUpdateRate;
@@ -113,6 +119,8 @@ public class ZombieAI : MonoBehaviour
         CheckMovement();
 
         SetWalkingAnimation(
+            !agent.pathPending &&
+            agent.hasPath &&
             agent.velocity.sqrMagnitude > 0.1f
         );
     }
@@ -151,8 +159,13 @@ public class ZombieAI : MonoBehaviour
 
     void CheckMovement()
     {
-        float movedDistance =
-            Vector3.Distance(transform.position, lastPosition);
+        if (agent.pathPending || !agent.hasPath)
+            return;
+
+        float movedDistance = Vector3.Distance(
+            transform.position,
+            lastPosition
+        );
 
         if (movedDistance < minimumMovement)
         {
@@ -166,7 +179,9 @@ public class ZombieAI : MonoBehaviour
         if (stuckTimer >= stuckCheckTime)
         {
             agent.ResetPath();
+
             nextDestinationUpdate = 0f;
+
             stuckTimer = 0f;
         }
 

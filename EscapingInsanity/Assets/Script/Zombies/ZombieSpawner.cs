@@ -6,54 +6,67 @@ using UnityEngine.AI;
 public class ZombieSpawner : MonoBehaviour
 {
     [Header("Zombie Settings")]
-    public GameObject zombiePrefab;
-    public Transform player;
+    [SerializeField] private GameObject zombiePrefab;
+    [SerializeField] private Transform player;
 
     [Header("Spawn Settings")]
-    public int startingZombies = 5;
-    public float spawnRadius = 20f;
-    public float minimumDistance = 5f;
+    [SerializeField] private int startingZombies = 5;
+    [SerializeField] private float spawnInterval = 5f;
 
-    [Header("Spawn Timing")]
-    public float spawnInterval = 1.5f;
-    public float spawnRetryDelay = 1f;
+    [Header("Spawn Distance")]
+    [SerializeField] private float spawnRadius = 20f;
+    [SerializeField] private float minimumDistance = 5f;
 
     [Header("NavMesh Settings")]
-    public float navMeshSearchDistance = 3f;
-    public int spawnAttempts = 20;
+    [SerializeField] private float navMeshSearchDistance = 3f;
+    [SerializeField] private int spawnAttempts = 20;
 
     private void Start()
     {
-        StartCoroutine(SpawnZombiesOverTime());
-    }
-
-    private IEnumerator SpawnZombiesOverTime()
-    {
-        // Keep searching for the player if it isn't assigned yet.
-        while (player == null)
+        if (player == null)
         {
             GameObject target =
                 GameObject.FindGameObjectWithTag("Player");
 
             if (target != null)
                 player = target.transform;
-
-            if (player == null)
-                yield return new WaitForSeconds(spawnRetryDelay);
         }
 
-        // Spawn the initial group gradually.
+        if (zombiePrefab == null)
+        {
+            Debug.LogError("ZombieSpawner: Missing zombie prefab!");
+            return;
+        }
+
+        if (player == null)
+        {
+            Debug.LogError("ZombieSpawner: Player not found!");
+            return;
+        }
+
+        StartCoroutine(SpawnRoutine());
+    }
+
+    private IEnumerator SpawnRoutine()
+    {
+        // Spawn the starting zombies.
         for (int i = 0; i < startingZombies; i++)
         {
-            while (!SpawnZombie())
+            if (SpawnZombie())
             {
-                yield return new WaitForSeconds(spawnRetryDelay);
+                Debug.Log("Starting zombie spawned: " + (i + 1));
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "Could not spawn starting zombie: " + (i + 1)
+                );
             }
 
             yield return new WaitForSeconds(0.5f);
         }
 
-        // Continue spawning forever.
+        // Keep spawning forever.
         while (true)
         {
             yield return new WaitForSeconds(spawnInterval);
@@ -61,29 +74,28 @@ public class ZombieSpawner : MonoBehaviour
             if (player == null)
                 continue;
 
-            // Retry until one zombie successfully spawns.
-            while (!SpawnZombie())
+            if (SpawnZombie())
             {
-                yield return new WaitForSeconds(spawnRetryDelay);
-
-                if (player == null)
-                    break;
+                Debug.Log("A new zombie spawned!");
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "Zombie spawn failed. Will try again."
+                );
             }
         }
     }
 
     private bool SpawnZombie()
     {
-        if (zombiePrefab == null || player == null)
-            return false;
-
         for (int i = 0; i < spawnAttempts; i++)
         {
-            Vector2 randomDirection =
+            Vector2 direction =
                 Random.insideUnitCircle.normalized;
 
-            if (randomDirection.sqrMagnitude < 0.001f)
-                randomDirection = Vector2.right;
+            if (direction.sqrMagnitude < 0.001f)
+                direction = Vector2.right;
 
             float distance = Random.Range(
                 minimumDistance,
@@ -92,9 +104,9 @@ public class ZombieSpawner : MonoBehaviour
 
             Vector3 candidatePosition = player.position +
                 new Vector3(
-                    randomDirection.x * distance,
+                    direction.x * distance,
                     0f,
-                    randomDirection.y * distance
+                    direction.y * distance
                 );
 
             if (!NavMesh.SamplePosition(
@@ -121,27 +133,31 @@ public class ZombieSpawner : MonoBehaviour
             NavMeshAgent agent =
                 zombie.GetComponent<NavMeshAgent>();
 
-            // Verify that the zombie can function.
-            if (ai == null || health == null ||
-                agent == null || !agent.enabled ||
-                !agent.isOnNavMesh)
+            if (ai == null || health == null || agent == null)
             {
+                Debug.LogError(
+                    "Zombie prefab is missing a required component!"
+                );
+
                 Destroy(zombie);
                 continue;
             }
 
-            // Assign the player to the zombie AI.
+            if (!agent.enabled || !agent.Warp(hit.position))
+            {
+                Debug.LogError(
+                    "Zombie could not be placed on the NavMesh!"
+                );
+
+                Destroy(zombie);
+                continue;
+            }
+
             ai.player = player;
 
             return true;
         }
 
         return false;
-    }
-
-    public void ZombieDefeated()
-    {
-        // No immediate replacement.
-        // The spawning coroutine handles future spawns.
     }
 }
