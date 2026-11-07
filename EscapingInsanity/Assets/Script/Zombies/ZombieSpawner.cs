@@ -1,25 +1,45 @@
 
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class ZombieSpawner : MonoBehaviour
 {
-    [Header("Zombie Settings")]
-    [SerializeField] private GameObject zombiePrefab;
-    [SerializeField] private Transform player;
+    [System.Serializable]
+    public class EnemyType
+    {
+        public string enemyName;
+        public GameObject enemyPrefab;
+
+        [Min(1)]
+        public int unlockLevel = 1;
+
+        [Min(0.01f)]
+        public float spawnWeight = 1f;
+    }
+
+    [Header("Enemy Types")]
+    public List<EnemyType> enemyTypes =
+        new List<EnemyType>();
+
+    [Header("Player Settings")]
+    public Transform player;
+
+    private XPManager xpManager;
 
     [Header("Spawn Settings")]
-    [SerializeField] private int startingZombies = 5;
-    [SerializeField] private float spawnInterval = 5f;
+    public int startingZombies = 5;
+    public float spawnRadius = 20f;
+    public float minimumDistance = 5f;
 
-    [Header("Spawn Distance")]
-    [SerializeField] private float spawnRadius = 20f;
-    [SerializeField] private float minimumDistance = 5f;
+    [Header("Spawn Timing")]
+    public float spawnInterval = 5f;
+    public float spawnRetryDelay = 1f;
 
     [Header("NavMesh Settings")]
-    [SerializeField] private float navMeshSearchDistance = 3f;
-    [SerializeField] private int spawnAttempts = 20;
+    public float navMeshSearchDistance = 3f;
+    public int spawnAttempts = 20;
 
     private void Start()
     {
@@ -32,15 +52,20 @@ public class ZombieSpawner : MonoBehaviour
                 player = target.transform;
         }
 
-        if (zombiePrefab == null)
-        {
-            Debug.LogError("ZombieSpawner: Missing zombie prefab!");
-            return;
-        }
-
         if (player == null)
         {
             Debug.LogError("ZombieSpawner: Player not found!");
+            return;
+        }
+
+        xpManager = player.GetComponent<XPManager>();
+
+        if (xpManager == null)
+            xpManager = player.GetComponentInChildren<XPManager>();
+
+        if (xpManager == null)
+        {
+            Debug.LogError("ZombieSpawner: XPManager not found!");
             return;
         }
 
@@ -49,46 +74,40 @@ public class ZombieSpawner : MonoBehaviour
 
     private IEnumerator SpawnRoutine()
     {
-        // Spawn the starting zombies.
+        // Spawn the initial group gradually.
         for (int i = 0; i < startingZombies; i++)
         {
-            if (SpawnZombie())
+            while (!SpawnZombie())
             {
-                Debug.Log("Starting zombie spawned: " + (i + 1));
-            }
-            else
-            {
-                Debug.LogWarning(
-                    "Could not spawn starting zombie: " + (i + 1)
-                );
+                yield return new WaitForSeconds(spawnRetryDelay);
             }
 
             yield return new WaitForSeconds(0.5f);
         }
 
-        // Keep spawning forever.
+        // Continue spawning indefinitely.
         while (true)
         {
             yield return new WaitForSeconds(spawnInterval);
 
-            if (player == null)
-                continue;
-
-            if (SpawnZombie())
+            while (!SpawnZombie())
             {
-                Debug.Log("A new zombie spawned!");
-            }
-            else
-            {
-                Debug.LogWarning(
-                    "Zombie spawn failed. Will try again."
-                );
+                yield return new WaitForSeconds(spawnRetryDelay);
             }
         }
     }
 
     private bool SpawnZombie()
     {
+        if (player == null || xpManager == null)
+            return false;
+
+        EnemyType selectedEnemy = SelectEnemy();
+
+        if (selectedEnemy == null ||
+            selectedEnemy.enemyPrefab == null)
+            return false;
+
         for (int i = 0; i < spawnAttempts; i++)
         {
             Vector2 direction =
@@ -114,12 +133,10 @@ public class ZombieSpawner : MonoBehaviour
                 out NavMeshHit hit,
                 navMeshSearchDistance,
                 NavMesh.AllAreas))
-            {
                 continue;
-            }
 
             GameObject zombie = Instantiate(
-                zombiePrefab,
+                selectedEnemy.enemyPrefab,
                 hit.position,
                 Quaternion.identity
             );
@@ -133,31 +150,72 @@ public class ZombieSpawner : MonoBehaviour
             NavMeshAgent agent =
                 zombie.GetComponent<NavMeshAgent>();
 
-            if (ai == null || health == null || agent == null)
+            if (ai == null || health == null ||
+                agent == null || !agent.enabled)
             {
                 Debug.LogError(
-                    "Zombie prefab is missing a required component!"
+                    selectedEnemy.enemyName +
+                    " is missing a required component!"
                 );
 
                 Destroy(zombie);
                 continue;
             }
 
-            if (!agent.enabled || !agent.Warp(hit.position))
+            if (!agent.Warp(hit.position))
             {
-                Debug.LogError(
-                    "Zombie could not be placed on the NavMesh!"
-                );
-
                 Destroy(zombie);
                 continue;
             }
 
             ai.player = player;
 
+            Debug.Log(
+                selectedEnemy.enemyName +
+                " spawned at Player Level " +
+                xpManager.currentLevel
+            );
+
             return true;
         }
 
         return false;
+    }
+
+    private EnemyType SelectEnemy()
+    {
+        List<EnemyType> availableEnemies =
+            new List<EnemyType>();
+
+        float totalWeight = 0f;
+
+        foreach (EnemyType enemy in enemyTypes)
+        {
+            if (enemy.enemyPrefab == null)
+                continue;
+
+            if (xpManager.currentLevel >= enemy.unlockLevel)
+            {
+                availableEnemies.Add(enemy);
+                totalWeight += enemy.spawnWeight;
+            }
+        }
+
+        if (availableEnemies.Count == 0)
+            return null;
+
+        float randomWeight = Random.Range(0f, totalWeight);
+
+        foreach (EnemyType enemy in availableEnemies)
+        {
+            randomWeight -= enemy.spawnWeight;
+
+            if (randomWeight <= 0f)
+                return enemy;
+        }
+
+        return availableEnemies[
+            availableEnemies.Count - 1
+        ];
     }
 }

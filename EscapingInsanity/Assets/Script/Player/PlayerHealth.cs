@@ -79,4 +79,25 @@ public class PlayerHealth : MonoBehaviour
         // Pause the game.
         Time.timeScale = 0f;
     }
+
+    public void Heal(float amount)
+    {
+        if (isDead)
+            return;
+
+        currentHealth = Mathf.Min(
+            currentHealth + amount,
+            maxHealth
+        );
+
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(
+                Mathf.RoundToInt(currentHealth)
+            );
+        }
+
+        Debug.Log("Player healed! Current HP: " + currentHealth);
+    }
+
 }

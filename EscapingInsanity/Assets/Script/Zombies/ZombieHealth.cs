@@ -16,6 +16,11 @@ public class ZombieHealth : MonoBehaviour
 
     public bool IsDead => isDead;
 
+    [Header("Health Kit Drop")]
+    public GameObject healthKitPrefab;
+    [Range(0f, 1f)]
+    public float healthKitDropChance = 0f;
+
     void Awake()
     {
         currentHealth = maxHealth;
@@ -53,6 +58,16 @@ public class ZombieHealth : MonoBehaviour
 
             if (xpOrb != null)
                 xpOrb.xpAmount = xpDropAmount;
+        }
+        // Chance to drop a health kit.
+        if (healthKitPrefab != null &&
+            Random.value <= healthKitDropChance)
+        {
+            Instantiate(
+                healthKitPrefab,
+                transform.position + Vector3.up * 0.5f,
+                Quaternion.identity
+            );
         }
 
         Destroy(gameObject);
