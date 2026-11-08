@@ -20,6 +20,10 @@ public class ZombieHealth : MonoBehaviour
     public GameObject healthKitPrefab;
     [Range(0f, 1f)]
     public float healthKitDropChance = 0f;
+    [Header("Boss Key Drop")]
+    public bool isBoss = false;
+    public GameObject keyPrefab;
+    
 
     void Awake()
     {
@@ -65,6 +69,14 @@ public class ZombieHealth : MonoBehaviour
         {
             Instantiate(
                 healthKitPrefab,
+                transform.position + Vector3.up * 0.5f,
+                Quaternion.identity
+            );
+        }
+        if (isBoss && keyPrefab != null)
+        {
+            Instantiate(
+                keyPrefab,
                 transform.position + Vector3.up * 0.5f,
                 Quaternion.identity
             );
