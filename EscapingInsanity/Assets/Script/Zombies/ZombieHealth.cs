@@ -20,6 +20,7 @@ public class ZombieHealth : MonoBehaviour
     public GameObject healthKitPrefab;
     [Range(0f, 1f)]
     public float healthKitDropChance = 0f;
+
     [Header("Boss Key Drop")]
     public bool isBoss = false;
     public GameObject keyPrefab;
