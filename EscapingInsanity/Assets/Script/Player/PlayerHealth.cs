@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using TMPro;
 
@@ -29,6 +28,9 @@ public class PlayerHealth : MonoBehaviour
 
         if (loseText != null)
             loseText.text = "YOU LOSE!";
+
+        // Make sure the game is not paused when the scene starts.
+        Time.timeScale = 1f;
     }
 
     public void TakeDamage(float damage, bool causesInsanity = true)
@@ -76,6 +78,10 @@ public class PlayerHealth : MonoBehaviour
             zombie.enabled = false;
         }
 
+        // Show the cursor so the player can click Retry.
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         // Pause the game.
         Time.timeScale = 0f;
     }
@@ -99,5 +105,4 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Player healed! Current HP: " + currentHealth);
     }
-
 }
