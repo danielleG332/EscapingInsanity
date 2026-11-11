@@ -21,6 +21,12 @@ public class ZombieHealth : MonoBehaviour
     [Range(0f, 1f)]
     public float healthKitDropChance = 0f;
 
+    [Header("Pill Drop")]
+    public GameObject pillPrefab;
+
+    [Range(0f, 1f)]
+    public float pillDropChance = 1f;
+
     [Header("Boss Key Drop")]
     public bool isBoss = false;
     public GameObject keyPrefab;
@@ -78,6 +84,15 @@ public class ZombieHealth : MonoBehaviour
         {
             Instantiate(
                 keyPrefab,
+                transform.position + Vector3.up * 0.5f,
+                Quaternion.identity
+            );
+        }
+        if (pillPrefab != null &&
+            Random.value <= pillDropChance)
+        {
+            Instantiate(
+                pillPrefab,
                 transform.position + Vector3.up * 0.5f,
                 Quaternion.identity
             );

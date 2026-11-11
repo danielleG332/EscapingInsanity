@@ -178,7 +178,9 @@ MonoBehaviour:
   maxHealth: 3
   xpOrbPrefab: {fileID: 1813956029419649506, guid: 3f362cc581598a649837854cdd98a529, type: 3}
   xpDropAmount: 30
-  healthKitPrefab: {fileID: 5955148543144945381, guid: 5b1761bbd179e514b90c1e43fe851b81, type: 3}
-  healthKitDropChance: 0.5
+  healthKitPrefab: {fileID: 0}
+  healthKitDropChance: 0
+  pillPrefab: {fileID: 8507715430968101985, guid: 369a616ed5ff903489a15fed483be8ef, type: 3}
+  pillDropChance: 0.3
   isBoss: 0
   keyPrefab: {fileID: 0}

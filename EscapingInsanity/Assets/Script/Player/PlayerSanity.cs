@@ -73,6 +73,43 @@ public class PlayerSanity : MonoBehaviour
         
     }
 
+
+    public void RestoreSanity(float amount)
+    {
+        if (amount <= 0f)
+            return;
+
+        currentSanity = Mathf.Clamp(
+            currentSanity + amount,
+            0f,
+            maxSanity
+        );
+
+        // Update insanity state.
+        isInsane = currentSanity <= 0f;
+
+        // Reset the insanity damage timer if sanity is restored.
+        if (!isInsane)
+            tickTimer = insanityTickInvterval;
+
+        // Update the sanity bar.
+        if (sanityBar != null)
+        {
+            sanityBar.SetSanity(
+                Mathf.RoundToInt(currentSanity)
+            );
+        }
+
+        // Restore the player's light range.
+        targetLightRange = Mathf.Lerp(
+            minLightRange,
+            maxLightRange,
+            currentSanity / maxSanity
+        );
+
+        Debug.Log("Sanity restored! Current Sanity: " + currentSanity);
+    }
+
     void Update()
     {
         if (playerLight != null)
