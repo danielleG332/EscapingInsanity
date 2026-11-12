@@ -19,6 +19,8 @@ public class PlayerMeleeCombat : MonoBehaviour
     private bool hasMeleeWeapon = false;
     private bool isAttacking = false;
 
+
+
     void Awake()
     {
         if (animator == null)
@@ -36,10 +38,12 @@ public class PlayerMeleeCombat : MonoBehaviour
             StartCoroutine(PerformAttack());
     }
 
-    public void PickUpWeapon()
+    public void PickUpWeapon(int weaponDamage)
     {
         hasMeleeWeapon = true;
-        Debug.Log("Melee weapon picked up!");
+        attackDamage = weaponDamage;
+
+        Debug.Log("Melee weapon picked up! Damage: " + attackDamage);
     }
 
     ZombieHealth FindNearbyZombie()

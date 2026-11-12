@@ -2,12 +2,18 @@ using UnityEngine;
 
 public class WeaponPickup : MonoBehaviour
 {
-    // A unique identifier for each weapon type (e.g., "Cannon", "Sword", "Pistol")
+    [Header("Weapon Settings")]
     [SerializeField] private string weaponID;
+    [SerializeField] private int weaponDamage = 1;
 
     public string GetWeaponID()
     {
         return weaponID;
+    }
+
+    public int GetWeaponDamage()
+    {
+        return weaponDamage;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -15,27 +21,13 @@ public class WeaponPickup : MonoBehaviour
         PlayerMeleeCombat melee =
             other.GetComponentInParent<PlayerMeleeCombat>();
 
-        if (melee != null && weaponID == "Bat")
+        if (melee != null)
         {
-            melee.PickUpWeapon();
+            melee.PickUpWeapon(weaponDamage);
 
-            Destroy(gameObject);
-        }
-        if (melee != null && weaponID == "Axe")
-        {
-            melee.PickUpWeapon();
-
-            Destroy(gameObject);
-        }
-        if (melee != null && weaponID == "Hockey Stick")
-        {
-            melee.PickUpWeapon();
-
-            Destroy(gameObject);
-        }
-        if (melee != null && weaponID == "Knife")
-        {
-            melee.PickUpWeapon();
+            Debug.Log(
+                weaponID + " picked up! Damage: " + weaponDamage
+            );
 
             Destroy(gameObject);
         }

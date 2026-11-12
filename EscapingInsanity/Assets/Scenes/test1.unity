@@ -61973,6 +61973,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponPickup
   weaponID: Bat
+  weaponDamage: 15
 --- !u!65 &593736483
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -75359,6 +75360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponPickup
   weaponID: Knife
+  weaponDamage: 5
 --- !u!65 &701613758
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -113748,6 +113750,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponPickup
   weaponID: Axe
+  weaponDamage: 20
 --- !u!65 &1069599292
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -247201,6 +247204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponPickup
   weaponID: Hockey Stick
+  weaponDamage: 10
 --- !u!65 &2121621405
 BoxCollider:
   m_ObjectHideFlags: 0
