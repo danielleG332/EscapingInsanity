@@ -249868,12 +249868,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerProjectileCombat
   projectilePrefab: {fileID: 1830474788420630390, guid: 7401b38e8bef4a54b9709fbb5f722fab, type: 3}
   projectileSpawnPoint: {fileID: 18987421}
-  projectileDamage: 2
-  projectileSpeed: 12
+  projectileDamage: 8
+  projectileSpeed: 25
   fireRate: 1
   attackRange: 12
   aimDirection: {fileID: 192496844}
-  targetingAngle: 60
+  targetingAngle: 90
   zombieLayers:
     serializedVersion: 2
     m_Bits: 4294967295

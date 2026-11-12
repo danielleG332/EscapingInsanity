@@ -1483,6 +1483,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7276823342023518630}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3031823169200524298}
   m_SourcePrefab: {fileID: 100100000, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}
 --- !u!4 &1161652813957180633 stripped
 Transform:
@@ -1642,6 +1645,31 @@ MonoBehaviour:
   minLightRange: 5
   maxLightRange: 20
   lightSmoothing: 5
+--- !u!114 &-3031823169200524298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969433927528511075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a32633f44b949f046a7df92767fb59c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerProjectileCombat
+  projectilePrefab: {fileID: 0}
+  projectileSpawnPoint: {fileID: 0}
+  projectileDamage: 2
+  projectileSpeed: 25
+  fireRate: 1
+  attackRange: 12
+  aimDirection: {fileID: 0}
+  targetingAngle: 60
+  zombieLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  projectileAnimationTrigger: PistolAttack
+  animator: {fileID: 0}
 --- !u!4 &2563565728475549379 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5474651894978984463, guid: d9cd8eb4a074cd84ab2686c58bcf21d9, type: 3}

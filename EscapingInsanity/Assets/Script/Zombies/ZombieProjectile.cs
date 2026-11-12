@@ -26,29 +26,24 @@ public class ZombieProjectile : MonoBehaviour
         damage = projectileDamage;
         speed = projectileSpeed;
 
-        Destroy(gameObject, lifetime);
-    }
-
-    void FixedUpdate()
-    {
         if (target == null)
         {
             Destroy(gameObject);
             return;
         }
 
+        // Calculate the direction toward the target once.
         Vector3 direction =
             (target.position + Vector3.up * 0.8f - transform.position)
             .normalized;
 
-        rb.MovePosition(
-            rb.position + direction * speed * Time.fixedDeltaTime
-        );
+        // Point the bullet in its travel direction.
+        transform.rotation = Quaternion.LookRotation(direction);
 
-        if (direction.sqrMagnitude > 0f)
-        {
-            transform.rotation = Quaternion.LookRotation(direction);
-        }
+        // Give the bullet actual forward velocity.
+        rb.linearVelocity = direction * speed;
+
+        Destroy(gameObject, lifetime);
     }
 
     private void OnTriggerEnter(Collider other)

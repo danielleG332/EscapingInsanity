@@ -62,15 +62,30 @@ public class PlayerMovement : MonoBehaviour
             x = 1f;
 
         // Turn only the character model when moving backward
+        // Rotate character based on movement direction
         if (characterModel != null)
         {
-            if (z < 0)
+            if (x < 0 && z == 0)
             {
+                // Face left
+                characterModel.localRotation =
+                    originalModelRotation * Quaternion.Euler(0, -90, 0);
+            }
+            else if (x > 0 && z == 0)
+            {
+                // Face right
+                characterModel.localRotation =
+                    originalModelRotation * Quaternion.Euler(0, 90, 0);
+            }
+            else if (z < 0)
+            {
+                // Face backward
                 characterModel.localRotation =
                     originalModelRotation * Quaternion.Euler(0, 180, 0);
             }
-            else
+            else if (z > 0)
             {
+                // Face forward
                 characterModel.localRotation = originalModelRotation;
             }
         }
