@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using TMPro;
 
@@ -10,6 +11,11 @@ public class PlayerHealth : MonoBehaviour
     public GameObject losePanel;
     public TMP_Text loseText;
 
+    [Header("Survival Timer")]
+    public TMP_Text timeSurvivedText;
+
+    private float survivalTimer = 0f;
+
     private bool isDead = false;
     private PlayerSanity sanity;
 
@@ -17,6 +23,12 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         sanity = GetComponent<PlayerSanity>();
+
+        // Reset survival timer.
+        survivalTimer = 0f;
+
+        // Make sure the game is not paused.
+        Time.timeScale = 1f;
 
         if (healthBar != null)
         {
@@ -29,8 +41,30 @@ public class PlayerHealth : MonoBehaviour
         if (loseText != null)
             loseText.text = "YOU LOSE!";
 
-        // Make sure the game is not paused when the scene starts.
-        Time.timeScale = 1f;
+        if (timeSurvivedText != null)
+            timeSurvivedText.text = "TIME SURVIVED: 00:00";
+    }
+
+    void Update()
+    {
+        if (!isDead)
+        {
+            survivalTimer += Time.deltaTime;
+
+            if (timeSurvivedText != null)
+            {
+                timeSurvivedText.text =
+                    "TIME SURVIVED: " + GetSurvivalTime();
+            }
+        }
+    }
+
+    private string GetSurvivalTime()
+    {
+        int minutes = Mathf.FloorToInt(survivalTimer / 60f);
+        int seconds = Mathf.FloorToInt(survivalTimer % 60f);
+
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
     public void TakeDamage(float damage, bool causesInsanity = true)
@@ -78,7 +112,7 @@ public class PlayerHealth : MonoBehaviour
             zombie.enabled = false;
         }
 
-        // Show the cursor so the player can click Retry.
+        // Show the cursor.
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
