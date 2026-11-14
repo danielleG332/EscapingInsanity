@@ -9,6 +9,8 @@ public class XPManager : MonoBehaviour
     public int currentXP = 0;
     public int xpToNextLevel = 100;
 
+    public LevelUpUpgradeUI upgradeUI;
+
     [Header("XP Bar UI")]
     public Slider xpBar;
     public TMP_Text levelText;
@@ -38,9 +40,14 @@ public class XPManager : MonoBehaviour
     void LevelUp()
     {
         currentLevel++;
-
-        // Increase the XP required for the next level.
         xpToNextLevel += 50;
+
+        if (upgradeUI != null)
+        {
+            upgradeUI.QueueLevelUp();
+        }
+
+        UpdateXPUI();
     }
 
     void UpdateXPUI()

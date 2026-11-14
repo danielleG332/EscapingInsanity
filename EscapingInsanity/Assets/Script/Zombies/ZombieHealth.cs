@@ -4,6 +4,7 @@ using UnityEngine.AI;
 
 public class ZombieHealth : MonoBehaviour
 {
+    public static float bonusDropChance = 0f;
     public int maxHealth = 3;
 
     private int currentHealth;
@@ -72,7 +73,8 @@ public class ZombieHealth : MonoBehaviour
         }
         // Chance to drop a health kit.
         if (healthKitPrefab != null &&
-            Random.value <= healthKitDropChance)
+            Random.value <= Mathf.Clamp01(
+                healthKitDropChance + bonusDropChance))
         {
             Instantiate(
                 healthKitPrefab,
@@ -89,7 +91,8 @@ public class ZombieHealth : MonoBehaviour
             );
         }
         if (pillPrefab != null &&
-            Random.value <= pillDropChance)
+            Random.value <= Mathf.Clamp01(
+                pillDropChance + bonusDropChance))
         {
             Instantiate(
                 pillPrefab,
