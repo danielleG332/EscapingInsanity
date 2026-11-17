@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZombieAI
   player: {fileID: 1161652813957180633, guid: 91960efe857240f408b2b691bd868dc2, type: 3}
-  attackRange: 1.8
+  attackRange: 1
   attackCooldown: 1.5
   damagePerAttack: 6
   destinationUpdateRate: 0.2

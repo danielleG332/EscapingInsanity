@@ -566,7 +566,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZombieHealth
   maxHealth: 10
   xpOrbPrefab: {fileID: 1813956029419649506, guid: 3f362cc581598a649837854cdd98a529, type: 3}
-  xpDropAmount: 5
+  xpDropAmount: 10
   healthKitPrefab: {fileID: 0}
   healthKitDropChance: 0
   pillPrefab: {fileID: 0}
