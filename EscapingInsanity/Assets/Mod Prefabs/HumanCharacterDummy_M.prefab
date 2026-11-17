@@ -557,7 +557,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 100
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -797,7 +797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 1, b: 0.09797096, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1582,6 +1582,7 @@ MonoBehaviour:
   healthBar: {fileID: 1311737818908356472}
   losePanel: {fileID: 1196102851634105028}
   loseText: {fileID: 8610598951882472869}
+  timeSurvivedText: {fileID: 0}
 --- !u!114 &3887782943823069781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1619,6 +1620,7 @@ MonoBehaviour:
   currentLevel: 1
   currentXP: 0
   xpToNextLevel: 100
+  upgradeUI: {fileID: 0}
   xpBar: {fileID: 0}
   levelText: {fileID: 0}
   xpText: {fileID: 0}

@@ -479,7 +479,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 5359f793a232ba84b8d2d9d70d8a6481, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -548,7 +548,7 @@ MonoBehaviour:
   player: {fileID: 1161652813957180633, guid: 91960efe857240f408b2b691bd868dc2, type: 3}
   attackRange: 1
   attackCooldown: 1.5
-  damagePerAttack: 2
+  damagePerAttack: 4
   destinationUpdateRate: 0.2
   stuckCheckTime: 3
   minimumMovement: 0.1
@@ -566,9 +566,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZombieHealth
   maxHealth: 10
   xpOrbPrefab: {fileID: 1813956029419649506, guid: 3f362cc581598a649837854cdd98a529, type: 3}
-  xpDropAmount: 15
+  xpDropAmount: 5
   healthKitPrefab: {fileID: 0}
   healthKitDropChance: 0
+  pillPrefab: {fileID: 0}
+  pillDropChance: 1
   isBoss: 0
   keyPrefab: {fileID: 0}
 --- !u!1 &1355434201404379201

@@ -20,6 +20,7 @@ public class WeaponPickup : MonoBehaviour
     [SerializeField] private float projectileSpeed = 12f;
     [SerializeField] private float fireRate = 1f;
     [SerializeField] private float attackRange = 12f;
+    [SerializeField] private int projectileAnimationIndex = 0;
 
     public string GetWeaponID()
     {
@@ -62,7 +63,8 @@ public class WeaponPickup : MonoBehaviour
                 weaponDamage,
                 projectileSpeed,
                 fireRate,
-                attackRange
+                attackRange,
+                projectileAnimationIndex
             );
 
             Debug.Log(weaponID + " picked up!");

@@ -1,13 +1,16 @@
 
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpikeTrap : MonoBehaviour
 {
+    [Header("Spike Settings")]
     public Transform[] spikes;
     public float raiseHeight = 0.5f;
     public float raiseDuration = 0.3f;
+
+    [Header("Damage Settings")]
+    public float damage = 20f;
 
     private Vector3[] hiddenPositions;
     private bool activated = false;
@@ -30,6 +33,17 @@ public class SpikeTrap : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             activated = true;
+
+            // Damage the player
+            PlayerHealth playerHealth =
+                other.GetComponentInParent<PlayerHealth>();
+
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage, false);
+            }
+
+            // Raise the spikes
             StartCoroutine(RaiseSpikes());
         }
     }
@@ -42,6 +56,7 @@ public class SpikeTrap : MonoBehaviour
         for (int i = 0; i < spikes.Length; i++)
         {
             startPositions[i] = spikes[i].localPosition;
+
             targetPositions[i] = hiddenPositions[i]
                 + Vector3.up * raiseHeight;
         }

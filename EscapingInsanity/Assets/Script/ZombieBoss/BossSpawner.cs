@@ -1,107 +1,77 @@
+
 using UnityEngine;
-using UnityEngine.AI;
 
 public class BossSpawner : MonoBehaviour
 {
+    [System.Serializable]
+    public class BossInfo
+    {
+        public string bossName;
+        public GameObject bossPrefab;
+        public Transform spawnPoint;
+        public int requiredLevel = 1;
+
+        [HideInInspector]
+        public bool hasSpawned = false;
+    }
+
     [Header("Boss Settings")]
-    public GameObject bossPrefab;
-    public int unlockLevel = 10;
+    public BossInfo[] bosses;
 
-    [Header("Spawn Settings")]
+    [Header("Player")]
     public Transform player;
-    public float spawnRadius = 12f;
-    public float minimumDistance = 6f;
-    public float navMeshSearchDistance = 3f;
-    public int spawnAttempts = 20;
 
-    private XPManager xpManager;
-    private bool hasSpawned = false;
+    public int currentPlayerLevel = 1;
 
     void Start()
     {
         if (player == null)
         {
-            GameObject target =
-                GameObject.FindGameObjectWithTag("Player");
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
 
-            if (target != null)
-                player = target.transform;
+            if (playerObject != null)
+                player = playerObject.transform;
         }
-
-        if (player != null)
-        {
-            xpManager = player.GetComponent<XPManager>();
-
-            if (xpManager == null)
-                xpManager = player.GetComponentInChildren<XPManager>();
-        }
-
-        if (bossPrefab == null)
-            Debug.LogError("BossSpawner: Boss prefab is missing!");
-
-        if (xpManager == null)
-            Debug.LogError("BossSpawner: XPManager was not found!");
     }
 
     void Update()
     {
-        if (hasSpawned || xpManager == null || player == null)
+        if (player == null)
             return;
 
-        if (xpManager.currentLevel >= unlockLevel)
+        foreach (BossInfo boss in bosses)
         {
-            SpawnBoss();
+            if (boss.hasSpawned)
+                continue;
+
+            if (currentPlayerLevel >= boss.requiredLevel)
+            {
+                SpawnBoss(boss);
+            }
         }
     }
 
-    void SpawnBoss()
+    void SpawnBoss(BossInfo boss)
     {
-        if (hasSpawned || bossPrefab == null)
-            return;
-
-        for (int i = 0; i < spawnAttempts; i++)
+        if (boss.bossPrefab == null || boss.spawnPoint == null)
         {
-            Vector2 direction =
-                Random.insideUnitCircle.normalized;
-
-            float distance =
-                Random.Range(minimumDistance, spawnRadius);
-
-            Vector3 position = player.position +
-                new Vector3(
-                    direction.x * distance,
-                    0f,
-                    direction.y * distance
-                );
-
-            if (NavMesh.SamplePosition(
-                position,
-                out NavMeshHit hit,
-                navMeshSearchDistance,
-                NavMesh.AllAreas))
-            {
-                GameObject boss = Instantiate(
-                    bossPrefab,
-                    hit.position,
-                    Quaternion.identity
-                );
-
-                ZombieAI ai =
-                    boss.GetComponentInChildren<ZombieAI>();
-
-                if (ai != null)
-                    ai.player = player;
-
-                hasSpawned = true;
-
-                Debug.Log("First boss has spawned!");
-
-                return;
-            }
+            Debug.LogWarning("Missing prefab or spawn point for " + boss.bossName);
+            return;
         }
 
-        Debug.LogWarning(
-            "BossSpawner: Could not find a valid spawn position."
+        Instantiate(
+            boss.bossPrefab,
+            boss.spawnPoint.position,
+            boss.spawnPoint.rotation
         );
+
+        boss.hasSpawned = true;
+
+        Debug.Log(boss.bossName + " has spawned!");
+    }
+
+    public void SetPlayerLevel(int level)
+    {
+        currentPlayerLevel = level;
     }
 }

@@ -24,7 +24,14 @@ public class PlayerProjectileCombat : MonoBehaviour
     private float nextFireTime;
 
     [Header("Animation")]
-    public string projectileAnimationTrigger = "PistolAttack";
+    public string[] projectileAnimationTriggers =
+{
+    "PistolAttack",
+    "RifleAttack"
+};
+
+    public int activeProjectileAnimationIndex = 0;
+
     public Animator animator;
 
     void Awake()
@@ -53,16 +60,18 @@ public class PlayerProjectileCombat : MonoBehaviour
         }
     }
 
+
     public void PickUpProjectileWeapon(
         GameObject prefab,
         int damage,
         float speed,
         float rate,
-        float range)
+        float range,
+        int animationIndex)
     {
         if (prefab == null)
         {
-            Debug.LogError("Projectile weapon has no projectile prefab!");
+            Debug.LogError("Projectile prefab is missing!");
             return;
         }
 
@@ -72,11 +81,14 @@ public class PlayerProjectileCombat : MonoBehaviour
         fireRate = rate;
         attackRange = range;
 
+        activeProjectileAnimationIndex = animationIndex;
+
         hasProjectileWeapon = true;
         nextFireTime = 0f;
 
-        Debug.Log("Projectile weapon picked up! Damage: " + projectileDamage);
+        Debug.Log("Projectile weapon picked up. Animation index: " + animationIndex);
     }
+
 
     ZombieHealth FindNearestZombie()
     {
@@ -144,9 +156,18 @@ public class PlayerProjectileCombat : MonoBehaviour
         if (target == null || target.IsDead)
             return;
 
-        // Play projectile firing animation.
-        if (animator != null)
-            animator.SetTrigger(projectileAnimationTrigger);
+        // Play the selected projectile animation.
+        if (animator != null &&
+            projectileAnimationTriggers.Length > 0)
+        {
+            if (activeProjectileAnimationIndex >= 0 &&
+                activeProjectileAnimationIndex < projectileAnimationTriggers.Length)
+            {
+                animator.SetTrigger(
+                    projectileAnimationTriggers[activeProjectileAnimationIndex]
+                );
+            }
+        }
 
         Vector3 spawnPosition = projectileSpawnPoint != null
             ? projectileSpawnPoint.position

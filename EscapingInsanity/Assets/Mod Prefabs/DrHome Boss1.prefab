@@ -802,7 +802,7 @@ MonoBehaviour:
   player: {fileID: 1161652813957180633, guid: 91960efe857240f408b2b691bd868dc2, type: 3}
   attackRange: 1.8
   attackCooldown: 1.5
-  damagePerAttack: 10
+  damagePerAttack: 12
   destinationUpdateRate: 0.2
   stuckCheckTime: 3
   minimumMovement: 0.1
@@ -820,9 +820,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZombieHealth
   maxHealth: 100
   xpOrbPrefab: {fileID: 1813956029419649506, guid: 3f362cc581598a649837854cdd98a529, type: 3}
-  xpDropAmount: 20
+  xpDropAmount: 100
   healthKitPrefab: {fileID: 5955148543144945381, guid: 5b1761bbd179e514b90c1e43fe851b81, type: 3}
   healthKitDropChance: 0.5
+  pillPrefab: {fileID: 0}
+  pillDropChance: 1
   isBoss: 1
   keyPrefab: {fileID: 8399503227476272350, guid: 372d84c18d77b38419aca046513392fc, type: 3}
 --- !u!95 &-1137944316877919704

@@ -10,7 +10,10 @@ public class LevelUpUpgradeUI : MonoBehaviour
         Health,
         Sanity,
         DropChance,
-        Damage
+        Damage,
+        Damage2,
+        Sprint,
+        Walk
     }
 
     [Header("UI")]
@@ -27,6 +30,7 @@ public class LevelUpUpgradeUI : MonoBehaviour
     public PlayerSanity playerSanity;
     public PlayerMeleeCombat meleeCombat;
     public PlayerProjectileCombat projectileCombat;
+    public PlayerMovement playerMovement;
 
     private UpgradeType firstUpgrade;
     private UpgradeType secondUpgrade;
@@ -85,7 +89,7 @@ public class LevelUpUpgradeUI : MonoBehaviour
 
     UpgradeType GetRandomUpgrade()
     {
-        return (UpgradeType)Random.Range(0, 4);
+        return (UpgradeType)Random.Range(0, 7);
     }
 
     void DisplayUpgrade(
@@ -114,9 +118,27 @@ public class LevelUpUpgradeUI : MonoBehaviour
                 break;
 
             case UpgradeType.Damage:
-                upgradeName.text = "WEAPON DAMAGE";
+                upgradeName.text = "MELEE DAMAGE";
                 description.text =
-                    "+1 Melee and Projectile Damage";
+                    "+1 Melee Damage";
+                break;
+
+            case UpgradeType.Damage2:
+                upgradeName.text = "PROJECTILE DAMAGE";
+                description.text =
+                    "+1 Projectile Damage";
+                break;
+
+            case UpgradeType.Sprint:
+                upgradeName.text = "SPRINT BOOST";
+                description.text =
+                    "+1 Sprint Speed";
+                break;
+
+            case UpgradeType.Walk:
+                upgradeName.text = "QUICKER MOVEMENT";
+                description.text =
+                    "+1 Walk Speed";
                 break;
         }
     }
@@ -148,9 +170,21 @@ public class LevelUpUpgradeUI : MonoBehaviour
             case UpgradeType.Damage:
                 if (meleeCombat != null)
                     meleeCombat.attackDamage += 1;
+                break;
 
+            case UpgradeType.Damage2:
                 if (projectileCombat != null)
                     projectileCombat.projectileDamage += 1;
+                break;
+
+            case UpgradeType.Walk:
+                if (playerMovement != null)
+                    playerMovement.walkSpeed += 1f;
+                break;
+
+            case UpgradeType.Sprint:
+                if (playerMovement != null)
+                    playerMovement.sprintSpeed += 1f;
                 break;
         }
 
