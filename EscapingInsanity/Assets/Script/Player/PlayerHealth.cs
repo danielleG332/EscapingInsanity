@@ -11,6 +11,10 @@ public class PlayerHealth : MonoBehaviour
     public GameObject losePanel;
     public TMP_Text loseText;
 
+    [Header("Win UI")]
+    public GameObject winPanel;
+    public TMP_Text winTimeSurvivedText;
+
     [Header("Survival Timer")]
     public TMP_Text timeSurvivedText;
 
@@ -43,6 +47,9 @@ public class PlayerHealth : MonoBehaviour
 
         if (timeSurvivedText != null)
             timeSurvivedText.text = "TIME SURVIVED: 00:00";
+
+        if (winPanel != null)
+            winPanel.SetActive(false);
     }
 
     void Update()
@@ -138,5 +145,38 @@ public class PlayerHealth : MonoBehaviour
         }
 
         Debug.Log("Player healed! Current HP: " + currentHealth);
+    }
+
+    public void WinGame()
+    {
+        if (isDead)
+            return;
+
+        if (winPanel != null)
+            winPanel.SetActive(true);
+
+        if (winTimeSurvivedText != null)
+        {
+            winTimeSurvivedText.text =
+                "TIME SURVIVED: " + GetSurvivalTime();
+        }
+
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+
+        if (movement != null)
+            movement.enabled = false;
+
+        ZombieAI[] zombies =
+            FindObjectsByType<ZombieAI>(FindObjectsSortMode.None);
+
+        foreach (ZombieAI zombie in zombies)
+        {
+            zombie.enabled = false;
+        }
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        Time.timeScale = 0f;
     }
 }

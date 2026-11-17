@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,9 @@ public class GateInteraction : MonoBehaviour
     [Header("Gate Settings")]
     public GateKeyType requiredKey = GateKeyType.Section1Key;
     public SlidingGate gate;
+
+    [Header("Win Settings")]
+    public bool isFinalGate = false;
 
     private bool playerNearby = false;
     private bool isUnlocked = false;
@@ -38,12 +42,29 @@ public class GateInteraction : MonoBehaviour
             {
                 inventory.UseKey(requiredKeyId);
 
-                isUnlocked = true;
-
                 if (gate != null)
                 {
+                    isUnlocked = true;
+
                     gate.OpenGate();
+
                     Debug.Log(requiredKeyId + " unlocked the gate!");
+
+                    // Display the win screen if this is the final gate.
+                    if (isFinalGate)
+                    {
+                        PlayerHealth playerHealth =
+                            FindFirstObjectByType<PlayerHealth>();
+
+                        if (playerHealth != null)
+                        {
+                            playerHealth.WinGame();
+                        }
+                        else
+                        {
+                            Debug.LogError("PlayerHealth not found!");
+                        }
+                    }
                 }
                 else
                 {
