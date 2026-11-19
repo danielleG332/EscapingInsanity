@@ -19,12 +19,27 @@ public class PlayerMeleeCombat : MonoBehaviour
     private bool hasMeleeWeapon = false;
     private bool isAttacking = false;
 
+    [Header("Audio")]
+    public AudioSource sfxSource;
+    public AudioClip[] swingSounds;
+    public AudioClip hitSound;
+
+    public float soundPitch = 0.75f;
+    public float minSoundInterval = 0.6f;
+    private float nextSoundTime;
+
 
 
     void Awake()
     {
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
+        
+        if (sfxSource == null)
+            sfxSource = GetComponent<AudioSource>();
+
+        if (sfxSource != null)
+            sfxSource.pitch = soundPitch;
     }
 
     void Update()
@@ -86,6 +101,12 @@ public class PlayerMeleeCombat : MonoBehaviour
         if (animator != null)
             animator.SetTrigger("MeleeAttack");
 
+        if (sfxSource != null && swingSounds.Length > 0 && Time.time >= nextSoundTime)
+        {
+            sfxSource.PlayOneShot(swingSounds[Random.Range(0, swingSounds.Length)]);
+            nextSoundTime = Time.time + minSoundInterval;
+        }
+
         // Wait for the swing to reach the target.
         yield return new WaitForSeconds(hitDelay);
 
@@ -106,6 +127,12 @@ public class PlayerMeleeCombat : MonoBehaviour
 
             if (zombie != null && !zombie.IsDead)
                 zombie.TakeDamage(attackDamage);
+
+            if (sfxSource != null & hitSound != null && Time.time >= nextSoundTime)
+            {
+                sfxSource.PlayOneShot(hitSound);
+                nextSoundTime = Time.time + minSoundInterval;
+            }
         }
 
         yield return new WaitForSeconds(

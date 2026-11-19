@@ -39,6 +39,11 @@ public class PlayerMovement : MonoBehaviour
         {
             cameraTransform = Camera.main.transform;
         }
+
+        if (sfxSource == null)
+        {
+            sfxSource = GetComponent<AudioSource>();
+        }
     }
 
     void Update()
@@ -220,11 +225,13 @@ public class PlayerMovement : MonoBehaviour
     public struct WeaponSlot
     {
         public string weaponID;         // Matches the ID on the pickup script
-        public GameObject weaponObject; // The deactivated weapon childed to the player
+        public GameObject weaponObject;
+        public AudioClip equipSound;// The deactivated weapon childed to the player
     }
 
     // Array list visible in the Inspector
     [SerializeField] private WeaponSlot[] weapons;
+    [SerializeField] private AudioSource sfxSource;
 
     private void ActivateWeapon(string id)
     {
@@ -234,11 +241,16 @@ public class PlayerMovement : MonoBehaviour
             if (slot.weaponID == id)
             {
                 slot.weaponObject.SetActive(true); // Turn on the weapon
-            }
-            else
-            {
-                // Optional: Turn off other weapons if you only want to hold one at a time
-                slot.weaponObject.SetActive(false);
+
+                if (sfxSource != null && slot.equipSound != null)
+                {
+                    sfxSource.PlayOneShot(slot.equipSound);
+                }
+                else
+                {
+                    // Optional: Turn off other weapons if you only want to hold one at a time
+                    slot.weaponObject.SetActive(false);
+                }
             }
         }
     }

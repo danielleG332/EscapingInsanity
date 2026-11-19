@@ -41,6 +41,9 @@ public class ZombieSpawner : MonoBehaviour
     public float navMeshSearchDistance = 3f;
     public int spawnAttempts = 20;
 
+    [Header("Audio")]
+    public AudioClip zombieGroanLoop;
+
     private void Start()
     {
         if (player == null)
@@ -169,6 +172,9 @@ public class ZombieSpawner : MonoBehaviour
             }
 
             ai.player = player;
+
+            if (ai.groanLoop == null)
+                ai.groanLoop = zombieGroanLoop;
 
             Debug.Log(
                 selectedEnemy.enemyName +

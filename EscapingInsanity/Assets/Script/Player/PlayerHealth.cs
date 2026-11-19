@@ -34,6 +34,8 @@ public class PlayerHealth : MonoBehaviour
         // Make sure the game is not paused.
         Time.timeScale = 1f;
 
+        AudioListener.pause = false;
+
         if (healthBar != null)
         {
             healthBar.SetMaxHealth(Mathf.RoundToInt(maxHealth));
@@ -125,6 +127,8 @@ public class PlayerHealth : MonoBehaviour
 
         // Pause the game.
         Time.timeScale = 0f;
+
+        AudioListener.pause = true;
     }
 
     public void Heal(float amount)
@@ -178,5 +182,7 @@ public class PlayerHealth : MonoBehaviour
         Cursor.visible = true;
 
         Time.timeScale = 0f;
+
+        AudioListener.pause = true;
     }
 }

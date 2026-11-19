@@ -28,7 +28,12 @@ public class PlayerProjectileCombat : MonoBehaviour
 {
     "PistolAttack",
     "RifleAttack"
+
 };
+
+    [Header("Audio")]
+    public AudioSource sfxSource;
+    public AudioClip[] gunshotSounds;
 
     public int activeProjectileAnimationIndex = 0;
 
@@ -41,6 +46,9 @@ public class PlayerProjectileCombat : MonoBehaviour
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
+
+        if (sfxSource == null)
+            sfxSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -200,6 +208,13 @@ public class PlayerProjectileCombat : MonoBehaviour
             projectileDamage,
             projectileSpeed
         );
+
+        if (sfxSource != null && gunshotSounds.Length > 0)
+        {
+            int i = Mathf.Clamp(activeProjectileAnimationIndex, 0, gunshotSounds.Length - 1);
+            if (gunshotSounds[i] != null)
+                sfxSource.PlayOneShot(gunshotSounds[i]);
+        }
 
         Debug.Log("Projectile fired at: " + target.name);
     }

@@ -16,6 +16,10 @@ public class ZombieAI : MonoBehaviour
     public float stuckCheckTime = 3f;
     public float minimumMovement = 0.1f;
 
+    [Header("Audio")]
+    public AudioClip groanLoop;
+    private AudioSource idleSource;
+
     private NavMeshAgent agent;
     private Animator animator;
     private PlayerHealth playerHealth;
@@ -39,6 +43,8 @@ public class ZombieAI : MonoBehaviour
         FindPlayer();
 
         lastPosition = transform.position;
+
+        SetupGroan();
     }
 
     void FindPlayer()
@@ -192,5 +198,33 @@ public class ZombieAI : MonoBehaviour
     {
         if (animator != null)
             animator.SetBool("IsWalking", walking);
+    }
+
+    void SetupGroan()
+    {
+        if (groanLoop == null)
+            return;
+
+        if (!TryGetComponent(out idleSource))
+            idleSource = gameObject.AddComponent<AudioSource>();
+
+        if (idleSource == null)
+        {
+            Debug.LogWarning("Could not create AudioSource on " + name);
+            return;
+        }
+
+        idleSource.playOnAwake = false;
+        idleSource.loop = true;
+        idleSource.spatialBlend = 1f;
+        idleSource.rolloffMode = AudioRolloffMode.Linear;
+        idleSource.minDistance = 2f;
+        idleSource.maxDistance = 15f;
+        idleSource.volume = 0.4f;
+        idleSource.pitch = Random.Range(0.85f, 1.15f);
+        idleSource.clip = groanLoop;
+        idleSource.Play();
+        idleSource.time = Random.Range(0f, groanLoop.length * 0.9f);
+
     }
 }
