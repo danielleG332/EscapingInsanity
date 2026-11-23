@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class PlayerHealth : MonoBehaviour
 
     private bool isDead = false;
     private PlayerSanity sanity;
+
+    [Header("Pause UI")]
+    public PauseUI pauseUI;
 
     void Start()
     {
@@ -97,6 +101,9 @@ public class PlayerHealth : MonoBehaviour
 
     public void GameOver()
     {
+        if (pauseUI != null)
+            pauseUI.GameEnded();
+
         if (isDead)
             return;
 
@@ -153,6 +160,9 @@ public class PlayerHealth : MonoBehaviour
 
     public void WinGame()
     {
+        if (pauseUI != null)
+            pauseUI.GameEnded();
+
         if (isDead)
             return;
 

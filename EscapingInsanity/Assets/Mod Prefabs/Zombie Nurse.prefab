@@ -175,6 +175,7 @@ MonoBehaviour:
   destinationUpdateRate: 0.2
   stuckCheckTime: 3
   minimumMovement: 0.1
+  groanLoop: {fileID: 0}
 --- !u!114 &6414035582494887855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,8 +193,8 @@ MonoBehaviour:
   xpDropAmount: 15
   healthKitPrefab: {fileID: 5955148543144945381, guid: 5b1761bbd179e514b90c1e43fe851b81, type: 3}
   healthKitDropChance: 0.25
-  pillPrefab: {fileID: 0}
-  pillDropChance: 1
+  pillPrefab: {fileID: 8507715430968101985, guid: 369a616ed5ff903489a15fed483be8ef, type: 3}
+  pillDropChance: 0.1
   isBoss: 0
   keyPrefab: {fileID: 0}
 --- !u!195 &-1387539530328479193
